@@ -1,20 +1,36 @@
 package com.biharidelights.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 public class Recipe {
 	
 	@Id
 	@GeneratedValue
+	//@Column(name="recipe_id")
 	Long id;
 	String name;
 	String description;
 	String serving;
 	String lastUpdated;
 	String createDate;
+	
+	@OneToMany(mappedBy = "recipe", cascade=CascadeType.ALL)
+	@JsonManagedReference
+	//@ElementCollection
+	List<Ingredient> ingredients = new ArrayList<>();//Aggregation
 
 	public String getName() {
 		return name;
@@ -62,5 +78,13 @@ public class Recipe {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public List<Ingredient> getIngredients() {
+		return ingredients;
+	}
+
+	public void setIngredients(List<Ingredient> ingredients) {
+		this.ingredients = ingredients;
 	}
 }
