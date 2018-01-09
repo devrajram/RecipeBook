@@ -1,12 +1,22 @@
 package com.biharidelights;
 
-import java.time.LocalDate;
+import java.util.Map;
+
+import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.orm.jpa.AbstractEntityManagerFactoryBean;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.biharidelights.model.Ingredient;
 import com.biharidelights.model.Recipe;
@@ -14,10 +24,36 @@ import com.biharidelights.service.RecipeService;
 
 @SpringBootApplication
 @EnableJpaRepositories
+@EnableJpaAuditing
+@EnableTransactionManagement
 public class RecipeBookApplication implements CommandLineRunner {
 	
 	@Autowired
 	RecipeService recipeService;
+	
+//	@Bean
+//	@Autowired
+//	public LocalContainerEntityManagerFactoryBean entityManagerFactory(String persistenceUnitName,
+//			DataSource dataSource, JpaVendorAdapter jpaVendorAdapter, Map<String, ?> jpaPropertyMap) {
+//		LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
+//		bean.setPersistenceUnitName(persistenceUnitName);
+//		bean.setDataSource(dataSource);
+//		bean.setJpaVendorAdapter(jpaVendorAdapter);
+//		bean.setJpaPropertyMap(jpaPropertyMap);
+//		
+//		//bean.setPersistenceUnitName("punit");
+//		return bean;
+//	}
+	
+	
+	@Bean
+	@Autowired
+	public PlatformTransactionManager transactionManager(LocalContainerEntityManagerFactoryBean entityManagerFactory) {
+		JpaTransactionManager transactionManager = new JpaTransactionManager();
+		transactionManager.setEntityManagerFactory(entityManagerFactory.getObject());
+		return transactionManager;
+	}
+	
 	
 //	@Autowired
 //	IngredientService ingredientService;
@@ -51,8 +87,8 @@ public class RecipeBookApplication implements CommandLineRunner {
 		ing2.setRecipe(recipe);
 		
 		recipe.setServing("5");
-		recipe.setCreateDate(LocalDate.now().toString());
-		recipe.setLastUpdated(LocalDate.now().toString());
+		//recipe.setCreateDate(LocalDate.now().toString());
+		//recipe.setLastUpdated(LocalDate.now().toString());
 		
 		
 		recipeService.addRecipe(recipe);
@@ -82,8 +118,8 @@ public class RecipeBookApplication implements CommandLineRunner {
 		ing4.setRecipe(recipe2);
 		
 		recipe2.setServing("2");
-		recipe2.setCreateDate(LocalDate.now().toString());
-		recipe2.setLastUpdated(LocalDate.now().toString());
+		//recipe2.setCreateDate(LocalDate.now().toString());
+		//recipe2.setLastUpdated(LocalDate.now().toString());
 		//save recipe
 		recipeService.addRecipe(recipe2);
 		
